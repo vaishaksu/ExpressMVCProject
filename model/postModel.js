@@ -6,6 +6,7 @@ var postSchema = new mongoose.Schema({
   likes: { type: Number },
   comments: { type: Array },
   users_post: { type: String }, 
+  post_id: {type: Number},
 });
 
 mongoose.model('posts', postSchema);

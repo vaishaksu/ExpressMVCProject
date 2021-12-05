@@ -13,5 +13,9 @@ module.exports = {
         allComments : results
       });
     });
+  },
+  GetAddCommentForm: (req, res) => {
+    console.log("List all Comments");
+    res.render("");
   }
 }

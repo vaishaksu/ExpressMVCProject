@@ -5,22 +5,14 @@ var mongoose = require('mongoose'),
 module.exports = {
   GetAllUsers: function (req, res) {
     console.log("List all users");
-
-
     Users.find({}, function (err, results) {
       if (err) {
         throw err;
       }
-
-      // Posts.find({}, function (err1, results1) {
-      //   console.log("-----> ", results1);
-
-      //   console.log("******> ", results);
-
+      // console.log("usersss: ", results);
       res.render("usersList.ejs", {
         allUsers: results
       });
-      // });
     });
   },
   GetDisplayLogin: (req, res) => {
@@ -40,8 +32,9 @@ module.exports = {
       username,
       password
     } = req.body;
+
     let validate = {
-      "username": username,
+      "username": `@${username}`,
       "password": password
     }
 
@@ -52,7 +45,7 @@ module.exports = {
       if (err) throw err;
       console.log("result: ", results);
       if (results != null) { // Success
-        res.redirect('/users');
+        res.redirect('/posts');
       } else { // Failure
         res.render("login.ejs");
       }
@@ -67,7 +60,9 @@ module.exports = {
       password,
       confirmPassword
     } = req.body;
-    let isPasswordValid = password === confirmPassword
+
+    let isPasswordValid = password === confirmPassword;
+
     if (isPasswordValid) { // Password is valid
       let register = {
         "first_name": first_name,
@@ -87,5 +82,81 @@ module.exports = {
         error
       });
     }
+  },
+  EditUser: (req, res) => {
+    let {
+      username
+    } = req.params;
+    Users.findOne({
+      username
+    }, (err, result) => {
+      if (err) throw err;
+      console.log("*****: ", result, !result);
+      if (result) { // Success
+        res.render('editUser.ejs', {
+          user: result
+        });
+      } else { // Failed
+        res.redirect("/users");
+      }
+    })
+  },
+  PostEditUser: (req, res) => {
+    let {
+      first_name,
+      last_name,
+      email,
+      password
+    } = req.body;
+
+    console.log("POSTING: ", req.body);
+    let postEdit = {
+      first_name,
+      last_name,
+      email,
+      password
+    };
+
+    const {
+      username
+    } = req.params;
+
+    Users.updateOne({
+      username
+    }, {
+      $set: {
+        first_name,
+        last_name,
+        email,
+        password
+      }
+    }, (err, result) => {
+      if (err) throw err;
+      console.log("result: ", result);
+      if (result.acknowledged) {
+        res.redirect('/users');
+      } else {
+        res.render("editUser.ejs", {
+          user: postEdit
+        });
+      }
+    });
+  },
+  DeleteUser: (req, res) => {
+    console.log("Deleteing");
+    const {
+      username
+    } = req.params;
+
+    Users.deleteOne({
+      username
+    }, (err, result) => {
+      if (err) throw err;
+      console.log("result: ", result);
+      if (result.deletedCount) {
+        res.redirect("/users")
+      }
+    })
+
   }
 }

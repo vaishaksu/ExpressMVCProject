@@ -41,16 +41,25 @@ var followersController = require('./controller/FollowerController');
 app.get('/login', usersController.GetDisplayLogin);
 app.get('/signup', usersController.GetDisplaySignup);
 app.get('/users', usersController.GetAllUsers);
+app.get('/EditUser/:username', usersController.EditUser);
+app.get('/DeleteUser/:username', usersController.DeleteUser);
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
 app.post('/validateUser', usersController.validateUser);
 app.post('/registerUser', usersController.registerUser);
+app.post('/EditUser/PostEditUser/:username', usersController.PostEditUser);
 
 
 /***-----------------------------POSTSCONTROLLER------------------------------------- */
 /* ++++++++++++++++ GET ++++++++++++++++ */
 app.get('/posts', postsController.GetAllPosts);
+app.get('/addPost/:username', postsController.GetAddPost);
+app.get('/editPost/:post_id', postsController.GetEditPost);
+app.get('/deletePost/:post_id', postsController.DeletePost);
 
+/*++++++++++++++++++ POST ++++++++++++++++++ */
+app.post('/addPost/postAddPost', postsController.PostAddPost);
+app.post('/editPost/postEditPost/:post_id', postsController.postEditPost);
 /* ------------------------------ COMMENTSCONTROLLER---------------------------------- */
 /** ++++++++++++++++ GET ++++++++++++++++ */
 app.get('/comments', commentsController.GetAllComments);

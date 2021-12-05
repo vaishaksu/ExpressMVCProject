@@ -9,9 +9,13 @@
     <h1>List of all Users</h1>
 
     <section data-position="users">
-       <% for( let i = 0; i < allPosts.length; i++) {%>
+       <!--<% for( let i = 0; i < allPosts.length; i++) {%>
             <%=allPosts[i].post_info %>
-        <% } %>
+        <% } %> -->
+
+        <% allPosts.forEach(function (post, index) {%>
+            <%= post.first_name %>
+        <% }) %>
     </section>
 </body>
 </html>

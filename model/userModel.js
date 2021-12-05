@@ -10,6 +10,7 @@ var userSchema = new mongoose.Schema({
     img: {type: String },
     followers: {type: Array },
     posts: {type: Array },
+    post_ids: { type: Array },
 });
 
 mongoose.model('users', userSchema);
