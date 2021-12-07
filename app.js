@@ -2,6 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var path = require('path');
 var bodyParser = require('body-parser');
+var multer = require('multer');
 var session = require('express-session');
 
 var app = express();
@@ -49,8 +50,9 @@ var followersController = require('./controller/FollowerController');
 app.get('/login', usersController.GetDisplayLogin);
 app.get('/signup', usersController.GetDisplaySignup);
 app.get('/users', usersController.GetAllUsers);
-app.get('/EditUser/:username', usersController.EditUser);
-app.get('/DeleteUser/:username', usersController.DeleteUser);
+app.get('/EditUser/:username/:yourProfile', usersController.EditUser);
+app.get('/DeleteUser/:username/:yourProfile', usersController.DeleteUser);
+app.get('/ViewReadOnlyUserById/:username', usersController.ViewReadOnlyUserById);
 app.get('/loggedOutUser', usersController.LoggedOutUser);
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
@@ -66,6 +68,7 @@ app.get('/addPost/:username', postsController.GetAddPost);
 app.get('/editPost/:post_id', postsController.GetEditPost);
 app.get('/deletePost/:post_id', postsController.DeletePost);
 app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id', postsController.GetPostById);
+app.get('/likePost/belongsTo/:users_post/belongsToUser/:post_id/likes/:likes/:allPosts', postsController.LikePost)
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
 app.post('/addPost/postAddPost', postsController.PostAddPost);
@@ -75,12 +78,13 @@ app.post('/editPost/postEditPost/:post_id', postsController.postEditPost);
 /* ------------------------------ COMMENTSCONTROLLER---------------------------------- */
 /** ++++++++++++++++ GET ++++++++++++++++ */
 app.get('/comments', commentsController.GetAllComments);
-app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/addComment', commentsController.GetAddCommentForm);
-app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/editComment/:comment_id', commentsController.EditCommentForm);
-app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/deleteComment/:comment_id', commentsController.DeleteComment);
+app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/addComment/:allPost', commentsController.GetAddCommentForm);
+app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/editComment/:comment_id/:allPost', commentsController.EditCommentForm);
+app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/deleteComment/:comment_id/:allPost', commentsController.DeleteComment);
+
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
-app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postAddComment', commentsController.PostAddComment);
+app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postAddComment/:allPost', commentsController.PostAddComment);
 app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postEditComment', commentsController.PostEditComment);
 
 /* ------------------------------ FOLLOWERSCONTROLLER---------------------------------- */

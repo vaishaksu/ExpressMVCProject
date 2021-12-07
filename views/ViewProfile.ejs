@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h2> View Your Profile </h2>
+        <a href="/EditUser/<%= viewYourInfo.username %>/yourProfile" >Edit Your Account </a>
+        <a href="/DeleteUser/<%= viewYourInfo.username %>/yourProfile" >Delete Your Account </a>
+
+        <div>
+            Name: <%=viewYourInfo.first_name %> <%= viewYourInfo. last_name %>
+            username: <%= viewYourInfo.username %>
+            Email: <%= viewYourInfo.email %>
+            <img src="/public/images/image12.jpg"/>
+
+            <h3>Your Post</h3>
+            <div>
+                <%
+                    var posts = viewYourInfo.posts_list;
+                    posts.forEach(function (post, index) {
+                %>
+                <%= post.post_info %>
+                <img src="<%= post.img %>"/>
+                Likes: <%= post.likes %>
+
+                <%
+                        var comments = post.comments_list;
+                        comments.forEach(function (comment, idx) {
+                %>
+                            <%= comment.value %>
+
+                <% }) %>
+
+                <% }) %>
+
+            </div>
+
+            <div>
+                <h3> You are folowing </h3>
+                <div>
+                    <%
+                        var followers = viewYourInfo.followers_list;
+                        followers.forEach(function(follower, indx) {
+                    %>
+
+                    <b><%= follower.follower_name %></b>
+                    <%= follower.follower_username %>
+                    <img src="<%= follower.follower_img %>"/>
+
+                    <% }) %>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

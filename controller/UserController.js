@@ -103,7 +103,7 @@ module.exports = {
             }
           }, {
             $out: "user_followers"
-          }], ( err1, result1 ) => {
+          }], (err1, result1) => {
             if (err1) throw err1;
 
             res.redirect('/users');
@@ -121,7 +121,8 @@ module.exports = {
   },
   EditUser: (req, res) => {
     let {
-      username
+      username,
+      yourProfile
     } = req.params;
     Users.findOne({
       username
@@ -130,7 +131,8 @@ module.exports = {
       console.log("*****: ", result, !result);
       if (result) { // Success
         res.render('editUser.ejs', {
-          user: result
+          user: result,
+          yourProfile
         });
       } else { // Failed
         res.redirect("/users");
@@ -154,7 +156,8 @@ module.exports = {
     };
 
     const {
-      username
+      username,
+      yourProfile
     } = req.params;
 
     Users.updateOne({
@@ -170,7 +173,11 @@ module.exports = {
       if (err) throw err;
       console.log("result: ", result);
       if (result.acknowledged) {
-        res.redirect('/users');
+        if (yourProfile === "yourProfile") {
+          res.redirect(`/ViewReadOnlyUserById/${username}`);
+        } else {
+          res.redirect('/users');
+        }
       } else {
         res.render("editUser.ejs", {
           user: postEdit
@@ -181,7 +188,8 @@ module.exports = {
   DeleteUser: (req, res) => {
     console.log("Deleteing");
     const {
-      username
+      username,
+      yourProfile
     } = req.params;
 
     Users.deleteOne({
@@ -213,35 +221,50 @@ module.exports = {
           $out: "user_followers"
         }], (err3, result3) => {
           if (err3) throw err3;
-          
+
           Posts.deleteMany({
             users_post: username
           }, (err1, result1) => {
             if (err1) throw err1;
             console.log("result111111111: ", result1);
-  
+
             if (result1.deletedCount) {
-  
+
               Comments.deleteMany({
                 user_comment: username
               }, (err2, result2) => {
                 if (err2) throw err2;
                 console.log("resul22222222: ", result2);
                 if (result2.deletedCount) {
-                  res.redirect('/users');
+                  if ( yourProfile === "yourProfile" ) {
+                    res.redirect(`/signup`);
+                  } else {
+                    res.redirect('/users');
+                  }
                 } else {
                   console.log("resul2222222346753473472: ", result2);
-                  res.redirect('/users');
+                  if ( yourProfile === "yourProfile" ) {
+                    res.redirect(`/signup`);
+                  } else {
+                    res.redirect('/users');
+                  }
                 }
               })
             } else {
               console.log("no post ");
-              res.redirect('/users');
+              if ( yourProfile === "yourProfile" ) {
+                res.redirect(`/signup`);
+              } else {
+                res.redirect('/users');
+              }
             }
           })
-          res.redirect("/users");
-        }
-      );
+          if ( yourProfile === "yourProfile" ) {
+            res.redirect(`/signup`);
+          } else {
+            res.redirect('/users');
+          }
+        });
       }
     })
   },
@@ -280,9 +303,81 @@ module.exports = {
     })
 
   },
+  ViewReadOnlyUserById: (req, res) => {
+    console.log("----> ");
+    const {
+      username
+    } = req.params;
+
+    Users.aggregate([{
+        $match: {
+          username
+        }
+      },
+      {
+        $lookup: {
+          from: "posts",
+          let: {
+            vaishakpost: "$post_ids"
+          },
+          pipeline: [{
+              $match: {
+                $expr: {
+                  $in: ["$post_id", "$$vaishakpost"]
+                }
+              }
+            },
+            {
+              $lookup: {
+                from: "comments",
+                let: {
+                  vaishak_comment: "$comment_ids"
+                },
+                pipeline: [{
+                  $match: {
+                    $expr: {
+                      $in: ["$comment_id", "$$vaishak_comment"]
+                    }
+                  }
+                }],
+                as: "comments_list"
+              }
+            }
+          ],
+          as: "posts_list"
+        }
+      },
+      {
+        $lookup: {
+          from: "followers",
+          let: {
+            followers_overall: "$follower_ids"
+          },
+          pipeline: [{
+            $match: {
+              $expr: {
+                $in: ["$follower_id", "$$followers_overall"]
+              }
+            }
+          }],
+          as: "followers_list"
+        }
+      }
+    ], (err, results) => {
+      if (err) {
+        throw err;
+      }
+      console.log("-----------------", results[0]);
+
+      res.render("ViewProfile.ejs", {
+        viewYourInfo: results[0]
+      });
+    });
+  },
   LoggedOutUser: (req, res) => {
     if (req.session.username) {
       req.sesion.username = "";
     }
+    res.redirect("/login");
   }
 }

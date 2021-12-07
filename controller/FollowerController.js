@@ -6,52 +6,6 @@ var mongoose = require('mongoose'),
 module.exports = {
   GetAllFollowers: function (req, res) {
     console.log("List all Followers");
-
-    // Followers.find({}, function (err, results) {
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   console.log("results: ", results);
-
-    //   // TODO: rm,epove the beklow code
-    //   req.session.username = "@vaishak.surendran"
-
-    //   Users.findOne({ username: req.session.username }, (err, result1) => {
-    //     if (err) throw err;
-    //     // let x = [];
-    //     // if  (result1) {
-
-    //     // }
-
-    //     let x = results.map(res => result1.follower_ids.some( r => {
-    //       if ( r == res ) {
-    //         return {
-    //           followerId: res,
-    //           isFollowing: true
-    //         }
-    //       } else {
-    //         return {
-    //           followerId: res,
-    //           isFollowing: false
-    //         }
-    //       }
-    //     }));
-
-    //     console.log("x: ", x);
-
-    //     let overAllResult = {
-    //       users: result1,
-    //       followers: results,
-    //     }
-
-    //     console.log("USEE: ", overAllResult.users);
-    //     res.render("followersList.ejs", {
-    //       allFollowers : overAllResult
-    //     });
-
-    //   })
-    // });
-
     // TODO: remove the below code
     req.session.username = "@vaishak.surendran"
     // FIXME: Fetching result from the new collection using map

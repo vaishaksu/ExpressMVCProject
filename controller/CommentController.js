@@ -24,6 +24,7 @@ module.exports = {
     const {
       users_post,
       post_id,
+      allPost
     } = req.params;
 
     Posts.findOne({
@@ -31,7 +32,9 @@ module.exports = {
       users_post
     }, (err, result) => {
       if (err) throw err;
-      // req.session.username = "@ashik.surendran";
+
+      // TODO: 
+      // req.session.username = "@ashik.surendran";h
       console.log("++++++++++++++++++++++++++++", req.session);
       const addCommentHereResult = {
         result,
@@ -40,7 +43,8 @@ module.exports = {
       console.log("result: ", result);
       console.log("addddddd::: ", addCommentHereResult);
       res.render("addCommentForm.ejs", {
-        commentPost: addCommentHereResult
+        commentPost: addCommentHereResult, 
+        allPost
       });
     });
 
@@ -50,6 +54,7 @@ module.exports = {
     const {
       post_id,
       users_post,
+      allPost
     } = req.params;
 
     const addComment = {
@@ -75,7 +80,11 @@ module.exports = {
           if (err1) throw err1;
           console.log("----------------: ", result1);
           if (result1.acknowledged) {
-            res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+            if (allPost === "allPost") {
+              res.redirect("/posts");
+            } else {
+              res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+            }
           }
         });
         // res.redirect('/posts');
@@ -89,7 +98,8 @@ module.exports = {
     const {
       post_id,
       users_post,
-      comment_id
+      comment_id,
+      allPost,
     } = req.params;
 
     Comments.findOne({
@@ -107,7 +117,8 @@ module.exports = {
 
       if (result) { // Success
         res.render('editComment.ejs', {
-          commentPost: concatenateResult
+          commentPost: concatenateResult, 
+          allPost
         });
       }
     })
@@ -117,6 +128,7 @@ module.exports = {
     const {
       post_id,
       users_post,
+      allPost,
     } = req.params;
 
     const {
@@ -139,7 +151,11 @@ module.exports = {
       if (err) throw err;
       console.log("---- + + ------------: ", result);
       if (result.acknowledged) {
-        res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+        if ( allPost === "allPost") {
+          res.redirect("/posts");
+        } else {
+          res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+        }
       }
     });
   },
@@ -147,7 +163,8 @@ module.exports = {
     const {
       post_id,
       users_post,
-      comment_id
+      comment_id,
+      allPost,
     } = req.params;
 
     Comments.deleteOne({
@@ -169,7 +186,11 @@ module.exports = {
           console.log("resul;t ****// ", result1);
           if  (err1) throw error;
           if (result1.acknowledged) {
-            res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+            if ( allPost === "allPost") {
+              res.redirect("/posts");
+            } else {
+              res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+            }
           }
         })
       }

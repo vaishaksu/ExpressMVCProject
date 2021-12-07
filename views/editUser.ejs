@@ -10,7 +10,7 @@
     <body>
         <div class="login-box">
             <h2>Edit User</h2>
-            <form action="PostEditUser/<%= user.username %>" method="post">
+            <form action="PostEditUser/<%= user.username %>/<%= yourProfile %>" method="post">
               <div class="user-box">
                 <input type="text" name="first_name" required="" value="<%= user.first_name%>">
                 <label>First Name</label>

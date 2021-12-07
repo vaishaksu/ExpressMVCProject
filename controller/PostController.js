@@ -9,55 +9,33 @@ const randomIdGenerator = (min, max) => {
 module.exports = {
   GetAllPosts: function (req, res) {
     console.log("List all post");
-    Users.aggregate([{
+    Posts.aggregate([{
         $lookup: {
-          from: "posts",
+          from: "comments",
           let: {
-            vaishakpost: "$post_ids"
-          },
-          pipeline: [{
-              $match: {
-                $expr: {
-                  $in: ["$post_id", "$$vaishakpost"]
-                }
-              }
-            },
-            {
-              $lookup: {
-                from: "comments",
-                let: {
-                  vaishak_comment: "$comment_ids"
-                },
-                pipeline: [{
-                  $match: {
-                    $expr: {
-                      $in: ["$comment_id", "$$vaishak_comment"]
-                    }
-                  }
-                }],
-                as: "comments_list"
-              }
-            }
-          ],
-          as: "posts_list"
-        }
-      },
-      {
-        $lookup: {
-          from: "followers",
-          let: {
-            followers_overall: "$follower_username"
+            comment_added: "$comment_ids"
           },
           pipeline: [{
             $match: {
               $expr: {
-                $eq: ["$follower_username", "$$followers_overall"]
+                $in: ["$comment_id", "$$comment_added"]
               }
             }
           }],
-          as: "followers_list"
+          as: "post_comments"
         }
-      }
+      },
+      {
+        $project: {
+          post_info: 1,
+          img: 1,
+          likes: 1,
+          users_post: 1,
+          _id: 0,
+          post_id: 1,
+          post_comments: 1
+        }
+      },
     ], (err, results) => {
       if (err) {
         throw err;
@@ -67,7 +45,8 @@ module.exports = {
       res.render("postsList.ejs", {
         allPosts: results
       });
-    });
+    })
+
   },
   GetAddPost: (req, res) => {
     console.log("Add post clicked");
@@ -267,6 +246,29 @@ module.exports = {
       res.render('ViewPost.ejs', {
         post: result[0]
       })
+    })
+  },
+  LikePost: (req, res) => {
+    const {
+      users_post,
+      post_id,
+      likes,
+      allPosts
+    } = req.params;
+
+    Posts.updateOne({
+      post_id: parseInt(post_id)
+    }, {
+      $set: {
+        likes: parseInt(likes) + 1
+      }
+    }, (err, result) => {
+      if (err) throw err;
+      console.log("==: ", result);
+
+      if( allPosts === "allPosts" ) {
+        res.redirect("/posts");
+      }
     })
   }
 }

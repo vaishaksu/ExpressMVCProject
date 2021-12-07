@@ -33,7 +33,7 @@
                     <td> <%= post.first_name %> <%= post.last_name %> </td>
                     <td> <%= post.username %></td>
                     <td> <%= post.email %></td>
-                    <td> <a class="btn btn-primary" href="EditUser/<%= post.username %>" >Edit User</a> <a class="btn btn-danger" href="DeleteUser/<%= post.username %>">Delete User</a>  </td>
+                    <td> <a class="btn btn-primary" href="EditUser/<%= post.username %>/admin" >Edit User</a> <a class="btn btn-danger" href="DeleteUser/<%= post.username %>/admin">Delete User</a>  </td>
                 </tr>
                 <% }) %>
             </tbody>

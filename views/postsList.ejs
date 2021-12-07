@@ -9,12 +9,19 @@
     <h1>List of all Users</h1>
 
     <section data-position="users">
-       <!--<% for( let i = 0; i < allPosts.length; i++) {%>
-            <%=allPosts[i].post_info %>
-        <% } %> -->
-
         <% allPosts.forEach(function (post, index) {%>
-            <%= post.first_name %>
+            <%= post.post_info %> <br/>
+            User Post: <%= post.users_post%> <br/>
+            View Your Account <a href="/ViewReadOnlyUserById/<%= post.users_post %>">View Your Account</a>
+            <a href="/getPostById/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>">View Post</a> &nbsp;
+            <a href="/likePost/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>/likes/<%= post.likes %>/allPosts">Like</a><%= post.likes %> <br/>
+            <% post.post_comments.forEach(function(comment, index){ %>
+               Comment:  <%= comment.value %> Username: <%= comment.user_comment%> &nbsp; 
+               <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/editComment/<%= comment.comment_id %>/allPost">Edit</a> &nbsp; 
+               <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/deleteComment/<%= comment.comment_id %>/allPost">Delete</a> <br/> 
+                <% }) %>
+                <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/addComment/allPost">Add Comment</a>
+                <hr>
         <% }) %>
     </section>
 </body>

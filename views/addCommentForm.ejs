@@ -10,7 +10,7 @@
     <body>
         <div class="login-box">
             <h2>Add Your comment here...</h2>
-            <form action="/getPostById/belongsTo/<%= commentPost.result.users_post %>/belongsToUser/<%= commentPost.result.post_id %>/postAddComment" method="post">
+            <form action="/getPostById/belongsTo/<%= commentPost.result.users_post %>/belongsToUser/<%= commentPost.result.post_id %>/postAddComment/<%= allPost %>" method="post">
 
               <div class="user-box">
                 <div name="post_info"> <%= commentPost.result.post_info %> </div>
