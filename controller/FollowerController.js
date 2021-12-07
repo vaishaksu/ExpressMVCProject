@@ -1,17 +1,194 @@
 var mongoose = require('mongoose'),
-Followers = mongoose.model('followers');
+  Followers = mongoose.model('followers'),
+  UserFollowers = mongoose.model('user_followers'),
+  Users = mongoose.model('users');
 
 module.exports = {
   GetAllFollowers: function (req, res) {
     console.log("List all Followers");
-    Followers.find({}, function (err, results) {
-      if (err) {
-        throw err;
+
+    // Followers.find({}, function (err, results) {
+    //   if (err) {
+    //     throw err;
+    //   }
+    //   console.log("results: ", results);
+
+    //   // TODO: rm,epove the beklow code
+    //   req.session.username = "@vaishak.surendran"
+
+    //   Users.findOne({ username: req.session.username }, (err, result1) => {
+    //     if (err) throw err;
+    //     // let x = [];
+    //     // if  (result1) {
+
+    //     // }
+
+    //     let x = results.map(res => result1.follower_ids.some( r => {
+    //       if ( r == res ) {
+    //         return {
+    //           followerId: res,
+    //           isFollowing: true
+    //         }
+    //       } else {
+    //         return {
+    //           followerId: res,
+    //           isFollowing: false
+    //         }
+    //       }
+    //     }));
+
+    //     console.log("x: ", x);
+
+    //     let overAllResult = {
+    //       users: result1,
+    //       followers: results,
+    //     }
+
+    //     console.log("USEE: ", overAllResult.users);
+    //     res.render("followersList.ejs", {
+    //       allFollowers : overAllResult
+    //     });
+
+    //   })
+    // });
+
+    // TODO: remove the below code
+    req.session.username = "@vaishak.surendran"
+    // FIXME: Fetching result from the new collection using map
+    UserFollowers.aggregate([{
+        $match: {
+          username: req.session.username
+        }
+      },
+      {
+        $project: {
+          username: 1,
+          Results: {
+            $map: {
+              input: "$followers_list",
+              as: "c",
+              in: {
+                follower_id: "$$c.follower_id",
+                follower_username: "$$c.follower_username",
+                follower_name: "$$c.follower_name",
+                follower_img: "$$c.follower_img",
+                isFollowing: {
+                  $arrayElemAt: [
+                    "$follower_ids",
+                    {
+                      $indexOfArray: ["$follower_ids", "$$c.follower_id"]
+                    }
+                  ]
+                },
+                follow_buzz: {
+                  $cond: {
+                    if: {
+                      $gte: [{
+                        $indexOfArray: ["$follower_ids", "$$c.follower_id"]
+                      }, 0]
+                    },
+                    then: true,
+                    else: false
+                  }
+                }
+              }
+            }
+          }
+        }
       }
-      console.log("results: ", results);
+    ], (err, result) => {
+      if (err) throw err;
       res.render("followersList.ejs", {
-        allFollowers : results
+        allFollowers: result[0]
       });
-    });
+    })
+  },
+  ConvertFollowers: (req, res) => {
+    const {
+      follower_id,
+      username,
+      follow
+    } = req.params;
+
+    if (follow == "true") { // Convert Following to Follower. Clicked on Following button
+      Users.updateOne({
+        username
+      }, {
+        $pull: {
+          "follower_ids": parseInt(follower_id)
+        }
+      }, (err, result) => {
+        if (err) throw err;
+
+        console.log("Pull: ", result);
+        if (result.acknowledged) {
+
+          //FIXME: Create a new collection just to update 'user_followers' collection 
+          Users.aggregate([{
+            $lookup: {
+              from: "followers",
+              let: {
+                vaishak: "$follower_ids"
+              },
+              pipeline: [{
+                $match: {
+                  $expr: {
+                    $not: {
+                      $in: ["follower_id", "$$vaishak"]
+                    }
+                  }
+                }
+              }],
+              as: "followers_list"
+            }
+          }, {
+            $out: "user_followers"
+          }], (err1, result1) => {
+            if (err1) throw err1;
+            console.log("result CONBERT: ", result1.length);
+            res.redirect('/followers');
+          })
+        }
+      });
+    } else { // Convert Follower to Following. Clicked on Follower button
+      Users.updateOne({
+        username
+      }, {
+        $push: {
+          "follower_ids": parseInt(follower_id)
+        }
+      }, (err, result) => {
+        if (err) throw err;
+        if (result.acknowledged) {
+
+          //FIXME: Create a new collection just to update 'user_followers' collection 
+          Users.aggregate([{
+            $lookup: {
+              from: "followers",
+              let: {
+                vaishak: "$follower_ids"
+              },
+              pipeline: [{
+                $match: {
+                  $expr: {
+                    $not: {
+                      $in: ["follower_id", "$$vaishak"]
+                    }
+                  }
+                }
+              }],
+              as: "followers_list"
+            }
+          }, {
+            $out: "user_followers"
+          }], (err1, result1) => {
+            if (err1) throw err1;
+            res.redirect('/followers');
+          })
+        }
+      });
+    }
+
+
   }
 }

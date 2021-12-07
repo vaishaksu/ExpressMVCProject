@@ -10,10 +10,19 @@
 <body>
   <h1>List of all Followers</h1>
   <section data-position="followers">
-    
-    <% for( let i = 0; i < allFollowers.length; i++) { %>
-      <%= allFollowers[i].follower_name %>
-    <% } %>
+    <% var x =  allFollowers.Results; 
+    x.forEach(function(user, index){
+    %>
+    <img width="50" height="50" src="<%= user.follower_img %>"/>
+    <b><%= user.follower_name%></b> &nbsp;(<%= user.follower_username %>)
+    <%if (user.follow_buzz) { %>
+      <a href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/true%>"> Following </a>
+      <% } else { %>
+        <a href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/false%>"> Follow </a> &nbsp; &nbsp;
+        <% } %>
+        <br />
+    <%})%>
   </section>
 </body>
+
 </html>

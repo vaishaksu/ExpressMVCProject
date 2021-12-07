@@ -97,7 +97,25 @@ module.exports = {
       if (err) throw err;
       console.log("RERSUHRFJNKolfbn: :::::: ", result);
       if (result) {
-        res.redirect('/posts');
+
+        Users.updateOne({
+            username: users_post
+          }, {
+            $push: {
+              'post_ids': jsonBody.post_id
+            }
+          },
+          (err1, result1) => {
+            if (err1) {
+              throw err1;
+            }
+            console.log("+++++++++++++> ", result1);
+            if (result1.acknowledged) {
+              res.redirect('/posts');
+
+            }
+          }
+        )
       } else {
         res.render("addPostForm.ejs", {
           users_post
@@ -148,7 +166,25 @@ module.exports = {
       console.log("result: ", result);
       if (err) throw err;
       if (result.acknowledged) {
-        res.redirect('/posts');
+        // Users.updateOne({
+        //     username: users_post
+        //   }, {
+        //     $push: {
+        //       'post_ids': post_id
+        //     }
+        //   },
+        //   (err1, result1) => {
+        //     if (err1) {
+        //       throw err1;
+        //     }
+        //     console.log("+++++++++++++> ", result1);
+        //   }
+        //   )
+
+        if (result1.acknowledged) {
+          res.redirect('/posts');
+        }
+
       } else {
         res.render("editPostForm.ejs", {
           post: postEdit
@@ -168,16 +204,69 @@ module.exports = {
       if (err) throw err;
       console.log("result: ", result);
       if (result.deletedCount) {
-        console.log({post_id});
-        Users.updateMany({},{$pull:{'post_ids': parseInt(post_id)}}, {multi: true}, (err1, result1) => {
+        console.log({
+          post_id
+        });
+        Users.updateMany({}, {
+          $pull: {
+            'post_ids': parseInt(post_id)
+          }
+        }, {
+          multi: true
+        }, (err1, result1) => {
           if (err1) throw err1;
-          if ( result1.acknowledged) {
+          if (result1.acknowledged) {
             res.redirect("/posts");
           } else {
             res.redirect("/posts");
           }
         })
       }
+    })
+  },
+  GetPostById: (req, res) => {
+    console.log("View post by id: ");
+    const {
+      users_post,
+      post_id,
+    } = req.params
+
+    console.log({
+      post_id,
+      users_post
+    });
+
+    Posts.aggregate([{
+        $match: {
+          post_id: parseInt(post_id),
+          users_post: users_post
+        }
+      },
+      {
+        $lookup: {
+          from: "comments",
+          let: {
+            comment_list: "$comment_ids"
+          },
+          pipeline: [{
+            $match: {
+              $expr: {
+                $in: ["$comment_id", "$$comment_list"]
+              }
+            }
+          }],
+          as: "comment_info"
+        }
+      }
+    ], (err, result) => {
+      if (err) {
+        throw err
+      }
+      console.log('LLLLLLL', result);
+
+      res.render('ViewPost.ejs', {
+        post: result[0]
+      })
     })
   }
 }

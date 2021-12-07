@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+    <div class="login-box">
+        <h2> View Post </h2>
+
+        <% if( post ) {%>
+        <div>
+            <%= post.post_info %>
+            <%= post.likes %>
+            <%= post.users_post %>
+
+            <div>
+                <% post.comment_info.forEach(function (el, index) {%>
+                <%= el.value %>
+                <%= el.user_comment %>
+                <%= el.post_info %>
+                <a href="<%= post.post_id %>/editComment/<%= el.comment_id %>">Edit</a> &nbsp;
+                <a href="<%= post.post_id %>/deleteComment/<%= el.comment_id %>">Delete </a>
+                <input type="hidden" name="comment_id" value="<%= el.comment_id %>" />
+                <% }) %>
+            </div>
+
+            <input type="hidden" value="<%= post.post_id %>" />
+
+            <a href="<%= post.post_id %>/addComment">Add Comment</a>
+        </div>
+        <%}%>
+          </div>
+    </body>
+</html>

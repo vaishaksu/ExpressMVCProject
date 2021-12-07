@@ -10,21 +10,22 @@
     <body>
         <div class="login-box">
             <h2>Add Your comment here...</h2>
-            <form action="/getPostById/belongsTo/<%= commentPost.result.users_post %>/belongsToUser/<%= commentPost.result.post_id %>/postAddComment" method="post">
+            <form action="/getPostById/belongsTo/<%= commentPost.users_post %>/belongsToUser/<%= commentPost.post_id %>/postEditComment" method="post">
 
-              <div class="user-box">
+              <!-- <div class="user-box">
                 <div name="post_info"> <%= commentPost.result.post_info %> </div>
-              </div>
+              </div> -->
 
               <div class="user-box">
-                <input type="text" name="value" required="">
+                <input type="text" name="value" value="<%= commentPost.result.value %>" required="">
                 <label>Comment</label>
               </div>
-              <input type="hidden" value="<%= commentPost.result.post_info %>"/>
+              <input type="hidden" name="comment_id" value="<%= commentPost.result.comment_id %>" />
+              <!-- <input type="hidden" value="<%= commentPost.result.post_info %>"/>
               <input type="hidden" value="<%= commentPost.result.likes %>"/>
               <input type="hidden" value="<%= commentPost.result.users_post %>"/>
               <input type="hidden" value="<%= commentPost.result.post_id %>"/>
-              <input type="hidden" value="<%= commentPost.logged_in_user %>"/>
+              <input type="hidden" value="<%= commentPost.logged_in_user %>"/> -->
               
               <!--<a href="#">
                 <span></span>
