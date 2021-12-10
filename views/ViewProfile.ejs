@@ -71,8 +71,11 @@
           <img src="/images/dummy.jpg">
           <% } %>
           <a href="/EditUser/<%= viewYourInfo.username %>/yourProfile"><button>Edit Profile</button></a>
-          <a href="/DeleteUser/<%= viewYourInfo.username %>/yourProfile"><button>Delete your
-              Account</button></a>
+
+          <% if (username == viewYourInfo.username){  %>
+            <a href="/DeleteUser/<%= viewYourInfo.username %>/yourProfile"><button>Delete your
+                Account</button></a>
+            <%}%>
         </div>
         <div class="profile-details">
           <h2><%= viewYourInfo.first_name %>&nbsp;<%= viewYourInfo.last_name %></h2>

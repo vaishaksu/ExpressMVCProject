@@ -398,7 +398,8 @@ module.exports = {
       console.log("-----------------", results[0]);
 
       res.render("ViewProfile.ejs", {
-        viewYourInfo: results[0]
+        viewYourInfo: results[0],
+        username: req.session.username
       });
     });
   },

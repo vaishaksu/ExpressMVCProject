@@ -299,7 +299,7 @@ module.exports = {
     Posts.aggregate([{
         $match: {
           post_id: parseInt(post_id),
-          users_post: "@vaishak.surendran"
+          users_post
         }
       },
       {
@@ -340,6 +340,7 @@ module.exports = {
 
       res.render('ViewPost.ejs', {
         post: result[0],
+        username: req.session.username
       })
     })
   },

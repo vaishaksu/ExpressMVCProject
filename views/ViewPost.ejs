@@ -66,9 +66,9 @@
                     <div class="col-10">
                         <div class="d-flex">
                             <div>
-    
+
                                 <a href="/ViewReadOnlyUserById/<%= post.users_post %>">
-    
+
                                     <% if (post.user_img) { %>
                                     <img width="50" height="50" src="/<%= post.user_img %>">
                                     <% } else { %>
@@ -110,7 +110,8 @@
                     </div>
 
                     <div class="col-2 text-end">
-                        <button class=" btn btn-light pt-3 pr-2" onclick="openPostActionsPopup()"><i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                        <button class=" btn btn-light pt-3 pr-2" onclick="openPostActionsPopup()"><i
+                                class="fa fa-ellipsis-v" aria-hidden="true"></i>
                         </button>
                     </div>
 
@@ -118,9 +119,11 @@
                 <div class="col-2 p-3 mb-3 mr-3" id="actions">
                     <div><a href="/getPostById/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>">View
                             Post </a></div>
+                    <% if (username == post.users_post){  %>
                     <div> <a href="/editPost/<%= post.post_id %>">Edit Post </a></div>
 
                     <div> <a href="/deletePost/<%= post.post_id %>">Delete Post </a></div>
+                    <%}%>
                     <div class="times" onclick="closeActionPopup()"><i class="fa fa-times"></i></div>
                 </div>
                 <div class="content-body">
@@ -156,7 +159,7 @@
                             </span>
 
                         </div>
-                        
+
                         <div class="mx-2 px-2 pt-2 pb-2 bacground-comment">
                             <div>
                                 <a href="/ViewReadOnlyUserById/<%= comment.user_comment %>">
