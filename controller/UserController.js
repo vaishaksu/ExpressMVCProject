@@ -5,6 +5,10 @@ var mongoose = require('mongoose'),
   Posts = mongoose.model('posts');
 
 module.exports = {
+  GetIndexPage: (req, res) => {
+    req.session.destroy();
+    res.render('index.ejs');
+  },
   GetAllUsers: function (req, res) {
     console.log("List all users");
     Users.find({}, function (err, results) {
@@ -35,13 +39,24 @@ module.exports = {
       password
     } = req.body;
 
-    let validate = {
-      "username": `@${username}`,
-      "password": password
+    let validate = {};
+
+    if(username.charAt(0) === "@") {
+      validate = {
+        "username": username,
+        "password": password
+      }
+    } else {
+      validate = {
+        "username": `@${username}`,
+        "password": password
+      }
     }
+    
+    console.log("validate.username.toLowerCase()::: ", validate.username.toLowerCase(), validate.password);
 
     Users.findOne({
-      username: validate.username,
+      username: validate.username.toLowerCase(),
       password: validate.password
     }, (err, results) => {
       if (err) throw err;
@@ -51,14 +66,19 @@ module.exports = {
         // console.log("username: ", validate.username);
         console.log("--------------------------------------", req.session);
         // sessionStorage.setItem("username", username);
-        res.redirect('/posts');
+
+        if ( username == "@admin" ) {
+          res.redirect('/users');
+        } else {
+          res.redirect('/posts');
+        }
       } else { // Failure
         res.render("login.ejs");
       }
     })
   },
   registerUser: (req, res) => {
-    console.log("Signup user: ");
+    console.log("Signup user: ", req.file);
     let {
       first_name,
       last_name,
@@ -74,14 +94,17 @@ module.exports = {
         "first_name": first_name,
         "last_name": last_name,
         "email": email,
-        "username": `@${first_name}.${last_name}`,
-        "password": password
+        "img": req.file?.path,
+        "username": `@${first_name}.${last_name}`.toLowerCase(),
+        "password": password,
+        "joined_date": new Date().toLocaleDateString('en-CA'),
       }
 
       Users.create(register, (err, result) => {
         if (err) throw err;
         if (result) { // Success
           req.session.username = `${register.username}`;
+          console.log("SUCCESSSSSSS:   ", result);
 
           //FIXME: Create a new collection 'user_followers' 
           Users.aggregate([{
@@ -106,7 +129,8 @@ module.exports = {
           }], (err1, result1) => {
             if (err1) throw err1;
 
-            res.redirect('/users');
+            
+            res.redirect('/posts');
           })
         } else { // Failure
 
@@ -147,6 +171,8 @@ module.exports = {
       password
     } = req.body;
 
+    const img = req.file?.path;
+
     console.log("POSTING: ", req.body);
     let postEdit = {
       first_name,
@@ -160,6 +186,8 @@ module.exports = {
       yourProfile
     } = req.params;
 
+    console.log("File to upload: ", req.file);
+
     Users.updateOne({
       username
     }, {
@@ -167,6 +195,7 @@ module.exports = {
         first_name,
         last_name,
         email,
+        img,
         password
       }
     }, (err, result) => {
@@ -245,8 +274,6 @@ module.exports = {
                   console.log("resul2222222346753473472: ", result2);
                   if ( yourProfile === "yourProfile" ) {
                     res.redirect(`/signup`);
-                  } else {
-                    res.redirect('/users');
                   }
                 }
               })
@@ -255,6 +282,7 @@ module.exports = {
               if ( yourProfile === "yourProfile" ) {
                 res.redirect(`/signup`);
               } else {
+                console.log("hit here");
                 res.redirect('/users');
               }
             }
@@ -375,9 +403,7 @@ module.exports = {
     });
   },
   LoggedOutUser: (req, res) => {
-    if (req.session.username) {
-      req.sesion.username = "";
-    }
-    res.redirect("/login");
+    req.session.destroy();
+    res.redirect("/");
   }
 }

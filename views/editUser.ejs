@@ -1,45 +1,96 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>BuzzTalk</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/login.css">
+        <link rel="shortcut icon" href="/images/logo.jpg" />
+        <link rel="stylesheet" href="/css/editUserStyles.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="/scripts/script_editUser.js"></script>
     </head>
-    <body>
-        <div class="login-box">
-            <h2>Edit User</h2>
-            <form action="PostEditUser/<%= user.username %>/<%= yourProfile %>" method="post">
-              <div class="user-box">
-                <input type="text" name="first_name" required="" value="<%= user.first_name%>">
-                <label>First Name</label>
+    <body style="background-color:rgba(231, 222, 222, 0.938);">
+    <form action="PostEditUser/<%= user.username %>/<%= yourProfile %>" method="post" enctype="multipart/form-data">
+      <div class="row">
+              <div class="profile-head">
+                  <div>
+                      <a href="/ViewReadOnlyUserById/<%=user.username %>"> <i class="fa fa-arrow-left" aria-hidden="true" > </i></a>
+                  </div>
+
+                  <div>
+                      <h2>Edit Profile</h2>
+                  </div>
+              </div>
+          <div class="column profile-edit">
+
+              <div style="margin-top: 50px;"></div>
+
+              <div class="profile-header">
+                  <div class="profile-img">
+                    <% if ( user.img) { %>
+                      <img src="/<%= user.img %>" id="img-upload-preview">
+                      <% } else { %>
+                        <img src="/images/dummy.jpg" id="img-upload-preview">
+                        <% } %>
+                      <div class="form-input">
+                          <h2> <%= user.first_name %> <%= user.last_name %> </h2>
+                          <label for="img-upload">upload</label>
+                          <input name="img" type="file" id="img-upload" accept="image/*" onchange="showPreview(event);">
+                      </div>
+                  </div>                    
               </div>
 
-              <div class="user-box">
-                <input type="text" name="last_name" required="" value="<%= user.last_name%>">
-                <label>Last Name</label>
-              </div>
+              <!--name, profession, bio, mobile, email, dob, marital status, gender-->
 
-              <div class="user-box">
-                <input type="email" name="email" required="" value="<%= user.email%>">
-                <label>Email</label>
-              </div>
+              <div class="content" style="background-color: white;">
+                 <form  name="profileDetails" action="#" onsubmit="return validation()">
+                      <div class="details">
+                          <i class="fa fa-user-circle"></i>
+                          <input type="text" id="name" name="first_name" placeholder="First Name" value="<%= user.first_name%>" required>
+                      </div>
 
-              <div class="user-box">
-                <input type="password" name="password" required="" value="<%= user.password%>">
-                <label>Password</label>
-              </div>
+                      <div class="details">
+                        <i class="fa fa-user-circle"></i>
+                        <input type="text" id="name" name="last_name" placeholder="Last Name" value="<%= user.last_name%>" required>
+                    </div>
+                      <div class="details">
+                          <i class="fa fa-envelope-square"></i>
+                          <input type="email" id="email" name="email" placeholder="Email" value="<%= user.email%>" required >
+                      </div>
 
-              <!-- <a href="#">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                SignUp
-              </a> -->
-              <input type="submit" value="Submit"/>
-            </form>
-          </div>
+                      <div class="details">
+                        <i class="fa fa-envelope-square"></i>
+                        <input type="password" name="password" required="" placeholder="Password" value="<%= user.password%>" required>
+                      </div>
+                    
+                      <div class="details submit-profile">
+                          <center><input type="submit" value="SUBMIT" class="profile-submit"></center>
+                      </div>
+                  </form>
+              </div>
+          </div><!--middle content ending -->
+      </div>
+    </form>
+
+        <script>
+            // var today = new Date();
+            // var dd = today.getDate();
+            // var mm = today.getMonth()+1;
+            // var yyyy = today.getFullYear();
+            // if(dd<10){
+            //     dd='0'+dd
+            // }
+            // if(mm<10){
+            //     mm='0'+mm
+            // }
+            // today = yyyy+'-'+mm+'-'+dd;
+            // document.getElementById("dob").max = today;           
+
+        </script>
+    
     </body>
+
 </html>

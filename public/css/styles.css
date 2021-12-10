@@ -1,5 +1,5 @@
 /*index page*/
-.row{
+.rows{
     display: flex;
     height: 100%;
 }
@@ -11,9 +11,10 @@
 
 .left, .right {
   width: 23%;
-  background-color: floralwhite;
+  background-color: #0707070d;
   
   position: fixed;
+  box-shadow: 0px 4px 25px -13px black
 }
 
 .right{
@@ -21,9 +22,9 @@
 }
 
 .middle {
-    margin-left: 25%;
+    margin-left: 24.25%;
     width: 49%;
-    background-color:lavenderblush;
+    background-color:#fff;
 }
 
 .header-logo {
@@ -78,40 +79,98 @@
     border-radius: 25px;
     background-color: white;
     border: 2px solid #73AD21;
-    padding: 20px;
-    width: 93%;
+    padding: 30px;
+    width: 100%;
     height: 20px;
     display: flex;
 }
 
+.view-profile-width {
+    width: 94%;
+}
+
 .div-search img{
-    margin-top: -15px;
-    height: 45px;
-    width: 45px;
+    margin-top: -20px;
+    height: 40px;
+    border-radius: 50%;
+    width: 40px;
+    margin-left: -10px;
 }
 
 .div-search p{
     width: 80%;
     color: black;
-    margin-top: 0px;
+    margin-top: -10px;
     opacity: 0.5;
     padding-left: 10px;
+    font-size: 16px;
 }
 
 .div-search i{
-    padding-left: 40px;
+    padding-left: 100px;
+    margin-top: -7px;
+    font-size: 20px;
 }
+
+.view-profile-width p {
+    margin-top: 0;
+}
+
+.view-profile-width img {
+    margin-top: -12px; 
+}
+
+.px-4 {
+    padding-right: 1.5rem!important;
+    padding-left: 1.5rem!important;
+} 
+
+.mt-3 {
+    margin-top: 1rem!important;
+}
+
+.d-flex {
+    display: flex!important;
+}
+
+.pb-3 {
+    padding-bottom: 1rem!important;
+}
+
+.mx-2 {
+    margin-right: 0.5rem!important;
+    margin-left: 0.5rem!important;
+}
+.pt-2 {
+    padding-top: 0.5rem!important;
+}
+
+.pb-2 {
+    padding-bottom: 0.5rem!important;
+}
+
+.pt-3 {
+    padding-top: 1rem!important;
+}
+
+.px-2 {
+    padding-right: 0.5rem!important;
+    padding-left: 0.5rem!important;
+}
+
+
 
 .content{
     margin-top: 10px;
     border-radius: 15px;
-    background-color: coral;
+    /* background-color: coral; */
     height: auto;
+    box-shadow: 0px 4px 25px -13px black;
 }
 
 .content-header{
     display: flex;
-    background-color: silver;
+    /* background-color: silver; */
     border-radius: 15px 15px 0px 0px;
 
 }
@@ -124,14 +183,59 @@
 .content-header-left img, .content-comment img{
     height: 40px;
     width: 40px;
-    margin: 10px 0px 10px 10px;
+    
     border-radius: 50%;
 }
 
+.p-2 {
+    padding: 15px;
+}
+
+.content-header-left .img-c {
+    margin: 10px 0px 10px 10px;
+}   
+
 .content-header-left p{    
-    padding: 5px 0px 10px 5px;
+    /* padding: 5px 0px 10px 5px; */
+    padding:10px 0px 0px 5px;
     font-weight: bold;
     font-size: large;
+}
+
+.row-c {
+    max-width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+    margin-top: var(--bs-gutter-y);
+}
+
+.col-6 {
+    flex: 0 0 auto;
+    width: 47%;
+}
+
+.pl-15 {
+    padding-left: 15px;
+}
+
+.user_post {
+    font-weight: bold;
+    font-size: large;
+    margin: 10px;
+}
+
+.bacground-comment {
+    border-radius: 20px;
+    background: #80808042;
+}
+
+.comment_add {
+    width: 97%;
+    height: 15px;
+    padding: 30px;
+    border: 1px solid #474343;
+    /* padding-left: 15px; */
+    margin-left: 13px;
 }
 
 .content-header-right{
@@ -154,6 +258,12 @@
     display:flex;
     align-items: center;
     justify-content:center;
+    border-top: 1px solid #00000026;
+    border-bottom: 1px solid #00000026;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-left: 25px;
+    margin-right: 25px;
 }
 
 .activity-response div i{
@@ -289,6 +399,8 @@
 .profile-header{
     background-color: white;
     border-radius: 15px;
+    box-shadow: 0px 4px 25px -13px black;
+    padding: 20px;
 }
 
 .profile-img{
@@ -468,4 +580,109 @@
     font-size: 16px;
     font-weight: bold;
     color: #fff;
+  }
+
+/*---------------------------*/
+.profile-edit {
+    margin-left: 20%;
+    width: 60%;
+    background-color:lavenderblush;
+}
+
+.profile-head{
+    width: 61%;
+    margin: -10px;
+    margin-left: 19.7%;
+    margin-right: -15px;
+    margin-top: -20px;
+    padding: -4px;
+    display: flex;
+    background-color: greenyellow;
+    position: fixed;
+}
+
+.profile-head i{
+    font-size: 40px;
+    padding: 15px 15px 15px 15px;
+}
+
+
+.form-input label, .details input[type="submit"]{
+    display:block;
+    width:45%;
+    height:45px;
+    margin-left: 25%;
+    line-height:50px;
+    text-align:center;
+    background:#1172c2;
+  
+    color:#fff;
+    font-size:15px;
+    font-family:"Open Sans",sans-serif;
+    text-transform:Uppercase;
+    font-weight:600;
+    border-radius:5px;
+    cursor:pointer;
+  }
+
+.form-input input {
+        display:none;
+  }
+
+  .details{
+      width: 80%;
+      min-height: 30px;
+      max-height: 60px;
+      margin-left: 10%;
+      padding: 15px 15px 15px 5px;
+      display: flex;
+  }
+
+  .details i{
+      font-size: 50px;
+      height: 50px;
+      width: 50px;
+  }
+
+  .details input, .details select{
+    width: 100%;
+    margin-left: 10px;
+    padding: 12px 20px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .details select{
+      margin-left: 20px;
+  }
+
+
+  .details input{
+      margin: 5px 10px 10px 30px;
+  }
+
+  .details input[type="submit"]{
+    background:red;
+    margin-left: 100%;
+    padding:0px 10px 5px 10px;
+
+  }
+
+  .submit-profile input{
+      min-height: 50px;
+      min-width: 110px;
+  }
+
+  .text-end {
+      text-align: end;
+  }
+
+  .align-items-center {
+    align-items: center;
+  }
+
+  .border-bottom-p {
+    border-bottom: 1px solid rgb(102, 102, 226)
   }

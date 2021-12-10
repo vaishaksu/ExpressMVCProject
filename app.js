@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var path = require('path');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+// var upload = multer({dest: 'uploads/'});
 var session = require('express-session');
 
 var app = express();
@@ -21,6 +22,24 @@ app.use(session({
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
 app.use('/images', express.static(__dirname + 'public/images'));
+app.use('/scripts', express.static(__dirname + 'public/scripts'));
+
+
+app.use('/assets', express.static('assets'));
+
+app.use(express.static(__dirname));
+app.use('/uploads',express.static('uploads'));
+
+var upload = multer({
+    storage: multer.diskStorage ({
+        destination: (req, file, cb) => {
+            cb(null, './uploads');
+        },
+        filename: function (req, file, callback) {
+            callback(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname))
+        }
+    })
+})
 
 /********************************** MODELS ***********************************************/
 require('./model/userModel');
@@ -47,6 +66,7 @@ var followersController = require('./controller/FollowerController');
 
 /* ------------------------------USERSCONTROLLER----------------------------------- */
 /** ++++++++++++++++ GET ++++++++++++++++ */
+app.get("/", usersController.GetIndexPage)
 app.get('/login', usersController.GetDisplayLogin);
 app.get('/signup', usersController.GetDisplaySignup);
 app.get('/users', usersController.GetAllUsers);
@@ -57,8 +77,8 @@ app.get('/loggedOutUser', usersController.LoggedOutUser);
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
 app.post('/validateUser', usersController.validateUser);
-app.post('/registerUser', usersController.registerUser);
-app.post('/EditUser/PostEditUser/:username', usersController.PostEditUser);
+app.post('/registerUser', upload.single('img'), usersController.registerUser);
+app.post('/EditUser/:username/PostEditUser/:username/:yourProfile', upload.single('img'), usersController.PostEditUser);
 
 
 /***-----------------------------POSTSCONTROLLER------------------------------------- */
@@ -71,8 +91,8 @@ app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id', postsContro
 app.get('/likePost/belongsTo/:users_post/belongsToUser/:post_id/likes/:likes/:allPosts', postsController.LikePost)
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
-app.post('/addPost/postAddPost', postsController.PostAddPost);
-app.post('/editPost/postEditPost/:post_id', postsController.postEditPost);
+app.post('/addPost/postAddPost', upload.single('img'), postsController.PostAddPost);
+app.post('/editPost/postEditPost/:post_id', upload.single('img'), postsController.postEditPost);
 
 
 /* ------------------------------ COMMENTSCONTROLLER---------------------------------- */
@@ -85,11 +105,18 @@ app.get('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/deleteComment
 
 /*++++++++++++++++++ POST ++++++++++++++++++ */
 app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postAddComment/:allPost', commentsController.PostAddComment);
-app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postEditComment', commentsController.PostEditComment);
+app.post('/getPostById/belongsTo/:users_post/belongsToUser/:post_id/postEditComment/:allPost', commentsController.PostEditComment);
 
 /* ------------------------------ FOLLOWERSCONTROLLER---------------------------------- */
 /** ++++++++++++++++ GET ++++++++++++++++ */
 app.get('/followers', followersController.GetAllFollowers);
 app.get('/followLink/:follower_id/:username/:follow', followersController.ConvertFollowers);
+
+
+app.get('/about', followersController.About);
+app.get('/privacy', followersController.Privacy);
+app.get('/faq', followersController.Faq);
+app.get('/guidelines', followersController.Guidelines);
+app.get('/contact', followersController.Contact);
 
 app.listen('3000');

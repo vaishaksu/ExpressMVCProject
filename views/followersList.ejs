@@ -5,24 +5,83 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous">
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<style>
+  .button-model {
+    display: inline-block;
+    margin: 10px 10px 5px 5px;
+    padding: 5px 5px 5px 5px;
+    font-size: 18px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px #999;
+    height: 40px;
+    width: 120px;
+  }
+
+  .btn-following {
+    background-color: #584ee7;
+  }
+
+  .button:hover {
+    background-color: #3e8e41;
+    opacity: 0.8;
+  }
+
+  .btn-following:hover {
+    background-color: #346fcf;
+    opacity: 0.8;
+  }
+
+  a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+</style>
 
 <body>
-  <h1>List of all Followers</h1>
-  <section data-position="followers">
-    <% var x =  allFollowers.Results; 
+  <div class="container">
+    <h1>List of all Followers</h1>
+    <div class="content p-4 pt-4 pb-4">
+      <section data-position="followers">
+        <% var x =  allFollowers.Results; 
     x.forEach(function(user, index){
-    %>
-    <img width="50" height="50" src="<%= user.follower_img %>"/>
-    <b><%= user.follower_name%></b> &nbsp;(<%= user.follower_username %>)
-    <%if (user.follow_buzz) { %>
-      <a href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/true%>"> Following </a>
-      <% } else { %>
-        <a href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/false%>"> Follow </a> &nbsp; &nbsp;
-        <% } %>
-        <br />
-    <%})%>
-  </section>
+      %>
+        <div class="row d-flex justify-content-between  p-3">
+          <div class="">
+            <img width="50" height="50" src="<%= user.follower_img %>" />
+            <b><%= user.follower_name%></b> &nbsp;(<%= user.follower_username %>)
+          </div>
+          <div class="">
+            <%if (user.follow_buzz) { %>
+            <a class="button-model btn-following" href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/true%>">
+              Following </a>
+            <% } else { %>
+            <a class="button-model" href="/followLink/<%= user.follower_id %>/<%= allFollowers.username %>/false%>">
+              <i class="fa fa-plus"></i>&nbsp; Follow
+            </a>
+            <% } %>
+          </div>
+        </div>
+        <hr>
+        <%})%>
+      </section>
+    </div>
+
+  </div>
 </body>
 
 </html>

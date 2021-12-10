@@ -33,7 +33,9 @@ module.exports = {
           users_post: 1,
           _id: 0,
           post_id: 1,
-          post_comments: 1
+          post_comments: 1,
+          posted_date: 1,
+          user_img: 1,
         }
       },
     ], (err, results) => {
@@ -41,11 +43,31 @@ module.exports = {
         throw err;
       }
       console.log("-----------------", results);
+      console.log("req.session:L ", req.session);
 
-      res.render("postsList.ejs", {
-        allPosts: results
-      });
-    })
+      // TODO: Comment the below only
+      // req.session.username = "@vaishak.surendran";
+
+      const {
+        username
+      } = req.session;
+
+      Users.findOne({
+        username
+      }, (err1, result1) => {
+        if (err1) throw err1;
+
+        if (result1) {
+          res.render("postsList.ejs", {
+            allPosts: results,
+            username,
+            user_img: result1.img,
+          });
+        } else {
+          res.redirect('/')
+        }
+      })
+    });
 
   },
   GetAddPost: (req, res) => {
@@ -53,9 +75,17 @@ module.exports = {
     const {
       username
     } = req.params;
-    res.render("addPostForm.ejs", {
-      users_post: username
-    });
+
+    Users.findOne({
+      username
+    }, (err, result) => {
+      if (err) throw err;
+
+      res.render("addPostForm.ejs", {
+        users_post: username,
+        result
+      });
+    })
   },
   PostAddPost: (req, res) => {
     const {
@@ -63,57 +93,108 @@ module.exports = {
       post_info
     } = req.body;
 
-    const jsonBody = {
-      "users_post": users_post,
-      "post_info": post_info,
-      "likes": 0,
-      "img": "",
-      "comment_ids": [],
-      "post_id": randomIdGenerator(1000, 10000000)
-    }
-    console.log("post clicked::: ", jsonBody, users_post);
-    Posts.create(jsonBody, (err, result) => {
-      if (err) throw err;
-      console.log("RERSUHRFJNKolfbn: :::::: ", result);
-      if (result) {
-
-        Users.updateOne({
-            username: users_post
-          }, {
-            $push: {
-              'post_ids': jsonBody.post_id
-            }
-          },
-          (err1, result1) => {
-            if (err1) {
-              throw err1;
-            }
-            console.log("+++++++++++++> ", result1);
-            if (result1.acknowledged) {
-              res.redirect('/posts');
-
-            }
-          }
-        )
-      } else {
-        res.render("addPostForm.ejs", {
-          users_post
-        });
+    Users.findOne({
+      username: users_post
+    }, (err1, result1) => {
+      if (err1) {
+        throw err1;
       }
-    });
+
+      const jsonBody = {
+        "users_post": users_post,
+        "post_info": post_info,
+        "likes": 0,
+        "img": req.file?.path,
+        "comment_ids": [],
+        "post_id": randomIdGenerator(1000, 10000000),
+        "posted_date": new Date().toLocaleDateString('en-CA'),
+        "user_img": result1.img
+      }
+
+      Posts.create(jsonBody, (err, result) => {
+        if (err) throw err;
+        console.log("RERSUHRFJNKolfbn: :::::: ", result);
+        if (result) {
+
+          Users.updateOne({
+              username: users_post
+            }, {
+              $push: {
+                'post_ids': jsonBody.post_id
+              }
+            },
+            (err1, result1) => {
+              if (err1) {
+                throw err1;
+              }
+
+
+
+              console.log("+++++++++++++> ", result1);
+              if (result1.acknowledged) {
+                res.redirect('/posts');
+              }
+            }
+          )
+        } else {
+          res.render("addPostForm.ejs", {
+            users_post
+          });
+        }
+      });
+    })
   },
   GetEditPost: (req, res) => {
     console.log("Add post clicked");
     const {
       post_id
     } = req.params;
-    Posts.findOne({
-      post_id
-    }, (err, result) => {
-      if (err) throw err;
+
+    // Posts.findOne({
+    //   post_id
+    // }, (err, result) => {
+    //   if (err) throw err;
+
+    //   Users.findOne({
+    //     username: result.users_post
+    //   }, (err1, result1) => {
+    //     if (err1) throw err;
+    //     res.render("editPostForm.ejs", {
+    //       post: result
+    //     });
+    //   });
+
+    // })
+
+    Posts.aggregate([{
+      $match: {
+        post_id: parseInt(post_id)
+      }
+    }, {
+      $lookup: {
+        from: "users",
+        let: {
+          fetch_user: "$users_post"
+        },
+        pipeline: [{
+          $match: {
+            $expr: {
+              $eq: ["$username", "$$fetch_user"]
+            }
+          }
+        }],
+        as: "post_user"
+      }
+    }, {
+      $unwind: '$post_user'
+    }], (err, result) => {
+      if (err) {
+        throw err
+      }
+      console.log('LLLLLLL', result);
 
       res.render("editPostForm.ejs", {
-        post: result
+        post: result[0]
       });
     })
   },
@@ -160,9 +241,9 @@ module.exports = {
         //   }
         //   )
 
-        if (result1.acknowledged) {
-          res.redirect('/posts');
-        }
+        // if (result1.acknowledged) {
+        res.redirect('/posts');
+        // }
 
       } else {
         res.render("editPostForm.ejs", {
@@ -218,7 +299,7 @@ module.exports = {
     Posts.aggregate([{
         $match: {
           post_id: parseInt(post_id),
-          users_post: users_post
+          users_post: "@vaishak.surendran"
         }
       },
       {
@@ -236,6 +317,20 @@ module.exports = {
           }],
           as: "comment_info"
         }
+      }, {
+        $lookup: {
+          from: "users",
+          pipeline: [{
+            $match: {
+              $expr: {
+                $eq: ["$username", req.session.username]
+              }
+            }
+          }],
+          as: "logged_in_user_info"
+        }
+      }, {
+        $unwind: "$logged_in_user_info"
       }
     ], (err, result) => {
       if (err) {
@@ -244,7 +339,7 @@ module.exports = {
       console.log('LLLLLLL', result);
 
       res.render('ViewPost.ejs', {
-        post: result[0]
+        post: result[0],
       })
     })
   },
@@ -266,7 +361,7 @@ module.exports = {
       if (err) throw err;
       console.log("==: ", result);
 
-      if( allPosts === "allPosts" ) {
+      if (allPosts === "allPosts") {
         res.redirect("/posts");
       }
     })

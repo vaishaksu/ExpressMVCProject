@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
   Comments = mongoose.model('comments'),
+  Users = mongoose.model('users'),
   Posts = mongoose.model('posts');
 
 const randomIdGenerator = (min, max) => {
@@ -42,9 +43,17 @@ module.exports = {
       }
       console.log("result: ", result);
       console.log("addddddd::: ", addCommentHereResult);
-      res.render("addCommentForm.ejs", {
-        commentPost: addCommentHereResult, 
-        allPost
+
+      Users.findOne({
+        username: addCommentHereResult.logged_in_user
+      }, (err, result1) => {
+        if (err) throw err;
+
+        res.render("addCommentForm.ejs", {
+          commentPost: addCommentHereResult,
+          allPost,
+          result: result1
+        });
       });
     });
 
@@ -57,41 +66,80 @@ module.exports = {
       allPost
     } = req.params;
 
-    const addComment = {
-      "value": req.body.value,
-      "user_comment": req.body.logged_in_user,
-      "post_info": req.body.post_info,
-      "comment_id": randomIdGenerator(5000, 50000000)
-    };
+    const username = req.body.user_comment;
+    console.log("*****************: ", req.body.user_comment, username);
 
-    Comments.create(addComment, (err, result) => {
-      if (err) throw err;
-      console.log("result: ", result);
-      if (result) { // Success
-        console.log(post_id);
 
-        Posts.updateOne({
-          post_id: parseInt(post_id)
+    Users.findOne({
+      username
+    }, (err1, result1) => {
+      if (err1) {
+        throw err1;
+      }
+
+      console.log("POSTTGYUHG: ", result1);
+
+      // The person who commented will go inside the postids
+      Users.updateOne({
+          username
         }, {
           $push: {
-            'comment_ids': parseInt(addComment.comment_id)
+            'post_ids': parseInt(post_id)
           }
-        }, (err1, result1) => {
-          if (err1) throw err1;
-          console.log("----------------: ", result1);
-          if (result1.acknowledged) {
-            if (allPost === "allPost") {
-              res.redirect("/posts");
-            } else {
-              res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
-            }
+        },
+        (err2, result2) => {
+          if (err2) {
+            throw err2;
           }
-        });
-        // res.redirect('/posts');
-      } else {
 
-      }
+          if (result2.acknowledged) {
+            const addComment = {
+              "value": req.body.value,
+              "user_comment": username,
+              "post_info": req.body.post_info,
+              "comment_id": randomIdGenerator(5000, 50000000),
+              "user_img": result1.img
+            };
+  
+            Comments.create(addComment, (err, result) => {
+              if (err) throw err;
+              console.log("result: ", result);
+              console.log("----****: ", username);
+              if (result) { // Success
+                console.log(post_id);
+  
+                Posts.updateOne({
+                  post_id: parseInt(post_id)
+                }, {
+                  $push: {
+                    'comment_ids': parseInt(addComment.comment_id)
+                  }
+                }, (err1, result1) => {
+                  if (err1) throw err1;
+                  console.log("----------------: ", result1);
+                  if (result1.acknowledged) {
+  
+                    if (allPost === "allPost") {
+                      res.redirect("/posts");
+                    } else {
+                      res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
+                    }
+                  }
+                });
+                // res.redirect('/posts');
+              } else {
+                res.redirect('/');
+              }
+            });
+          } else {
+            res.redirect('/');
+          }
+
+        });
+
+
     });
+
   },
   EditCommentForm: (req, res) => {
     console.log('post all comment');
@@ -115,11 +163,15 @@ module.exports = {
         users_post
       }
 
+      console.log("erereeer: ", concatenateResult);
+
       if (result) { // Success
         res.render('editComment.ejs', {
-          commentPost: concatenateResult, 
+          commentPost: concatenateResult,
           allPost
         });
+      } else {
+        res.redirect('/');
       }
     })
   },
@@ -151,7 +203,7 @@ module.exports = {
       if (err) throw err;
       console.log("---- + + ------------: ", result);
       if (result.acknowledged) {
-        if ( allPost === "allPost") {
+        if (allPost === "allPost") {
           res.redirect("/posts");
         } else {
           res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);
@@ -184,9 +236,9 @@ module.exports = {
           }
         }, (err1, result1) => {
           console.log("resul;t ****// ", result1);
-          if  (err1) throw error;
+          if (err1) throw error;
           if (result1.acknowledged) {
-            if ( allPost === "allPost") {
+            if (allPost === "allPost") {
               res.redirect("/posts");
             } else {
               res.redirect(`/getPostById/belongsTo/${users_post}/belongsToUser/${post_id}`);

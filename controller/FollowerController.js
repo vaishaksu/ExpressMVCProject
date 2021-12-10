@@ -7,7 +7,7 @@ module.exports = {
   GetAllFollowers: function (req, res) {
     console.log("List all Followers");
     // TODO: remove the below code
-    req.session.username = "@vaishak.surendran"
+    // req.session.username = "@vaishak.surendran"
     // FIXME: Fetching result from the new collection using map
     UserFollowers.aggregate([{
         $match: {
@@ -142,7 +142,20 @@ module.exports = {
         }
       });
     }
-
-
+  },
+  About: (req, res) => {
+    res.render('about.ejs');
+  },
+  Faq: (req, res) => {
+    res.render('faq.ejs');
+  }, 
+  Guidelines: (req, res) => {
+    res.render('guidelines.ejs');
+  },
+  Contact: (req, res) => {
+    res.render('contact.ejs');
+  },
+  Privacy: (req, res) => {
+    res.render('privacy.ejs');
   }
 }

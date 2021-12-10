@@ -1,33 +1,64 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/login.css">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>BuzzTalk</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="/images/logo.jpg" />
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="/scripts/script_editUser.js"></script>
+
 </head>
 
 <body>
-    <div class="login-box">
-        <h2>Edit Post</h2>
-        <form action="postEditPost/<%= post.post_id %>" method="post">
-            <input type="hidden" name="users_post" value="<%= post.users_post %>" />
-            <div class="user-box">
-                <input type="text" name="post_info" required="" value="<%= post.post_info %>">
-                <label>Post</label>
-            </div>
-            <!-- <a href="#">
-                <span></span>
-                <span></span> 
-                <span></span>
-                <span></span>
-                Submit
-              </a> -->
-            <input class="submit-btn" type="submit" value="Submit" />
-        </form>
-    </div>
-</body>
 
+  <div class="post-main-div">
+    <form action="postEditPost/<%= post.post_id %>" method="post" enctype="multipart/form-data">
+      <div class="post-header-main">
+        <div class="post-header align-items-center d-flex">
+            <div>
+                <a href="/ViewReadOnlyUserById/<%= post.post_user.username %>">
+                    <% if(post.post_user.img) { %>
+                      <img src="/<%= post.post_user.img  %>" />
+                      <% } else { %>
+                        <img src="/images/dummy.jpg">
+                        <% } %>
+                        
+                  </a>
+            </div>
+            <div>
+                <span> <%= post.post_user.username %> </span>
+            </div>
+        </div>
+        <input type="hidden" name="users_post" value="<%= post.users_post %>" />
+
+        <!-- <button class="glow-on-hover" type="button"><i class="fa fa-paper-plane"></i>  Post</button> -->
+        <input class="submit-btn" type="submit" value="Submit" />
+      </div>
+  
+      <div>
+        <textarea class="post-textarea" name="post_info" required="" value="<%= post.post_info %>" cols="95" rows="10"
+          placeholder="What's on your mind..."><%= post.post_info %></textarea>
+      </div>
+  
+      <div class="post-image">
+        <input type="file" name="img" id="img-upload" class="button-image" accept="image/*" onchange="showPreview(event)">
+        <div class="image-previews pt-3" id="imagepreview">
+            <% if ( post.img) { %>
+                <img width="500" height="200" src="/<%= post.img %>" id="img-upload-preview">
+                <% } else { %>
+                  <img width="500" height="200" src="/images/dummy.jpg" id="img-upload-preview">
+                  <% } %>
+          <img src="/<%= post.img %>" alt="Image preview" class="image-preview_image">
+          <span class="image-preview__default-text"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
 </html>

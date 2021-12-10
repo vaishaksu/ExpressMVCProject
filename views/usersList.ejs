@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous">
     </script>
+        <!-- <link rel="stylesheet" href="/css/login.css"> -->
 </head>
 
 <body>
@@ -24,6 +25,7 @@
                     <th>Name</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Image</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -33,6 +35,8 @@
                     <td> <%= post.first_name %> <%= post.last_name %> </td>
                     <td> <%= post.username %></td>
                     <td> <%= post.email %></td>
+                    <td><img src="<%= post.img %>" width="50" height="50" name="<%= post.img %>"/></td>
+                    
                     <td> <a class="btn btn-primary" href="EditUser/<%= post.username %>/admin" >Edit User</a> <a class="btn btn-danger" href="DeleteUser/<%= post.username %>/admin">Delete User</a>  </td>
                 </tr>
                 <% }) %>

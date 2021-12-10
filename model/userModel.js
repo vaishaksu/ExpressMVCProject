@@ -12,6 +12,7 @@ var userSchema = new mongoose.Schema({
     posts: {type: Array },
     post_ids: { type: Array },
     follower_ids: { type: Array },
+    joined_date: { type: String },
 });
 
 mongoose.model('users', userSchema);

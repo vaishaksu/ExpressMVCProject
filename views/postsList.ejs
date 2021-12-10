@@ -1,28 +1,227 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>List of all Users</h1>
+<!DOCTYPE html>
+<html>
 
-    <section data-position="users">
-        <% allPosts.forEach(function (post, index) {%>
-            <%= post.post_info %> <br/>
-            User Post: <%= post.users_post%> <br/>
-            View Your Account <a href="/ViewReadOnlyUserById/<%= post.users_post %>">View Your Account</a>
-            <a href="/getPostById/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>">View Post</a> &nbsp;
-            <a href="/likePost/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>/likes/<%= post.likes %>/allPosts">Like</a><%= post.likes %> <br/>
-            <% post.post_comments.forEach(function(comment, index){ %>
-               Comment:  <%= comment.value %> Username: <%= comment.user_comment%> &nbsp; 
-               <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/editComment/<%= comment.comment_id %>/allPost">Edit</a> &nbsp; 
-               <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/deleteComment/<%= comment.comment_id %>/allPost">Delete</a> <br/> 
-                <% }) %>
-                <a href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/addComment/allPost">Add Comment</a>
-                <hr>
-        <% }) %>
-    </section>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BuzzTalk</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="./images/logo.jpg" />
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="rows">
+        <div class="column left">
+            <div class="header-logo">
+                <img src="./images/logo.jpg" alt="logo" width="75" height="75">
+                <span class="header-title">BuzzTalk</span>
+            </div>
+            <div class="side-icons">
+                <div class="side-icons-single">
+                    <a href="/posts" style="color: red;"><i class="fa fa-home"></i>Feed</a>
+                </div>
+                <div class="side-icons-single">
+                    <a href="/ViewReadOnlyUserById/<%= username %>" style="color: red;"><i
+                            class="fa fa-user"></i>Profile</a>
+                </div>
+                <div class="side-icons-single">
+                    <a href="/addPost/<%= username %>" style="color: red;"><i class="fa fa-paper-plane"></i>Post</a>
+                </div>
+                <div class="side-icons-single">
+                    <a href="/loggedOutUser" style="color: red;"><i class="fa fa-sign-out"></i>Logout</a>
+                </div>
+            </div>
+
+        </div>
+        <div class="column middle">
+
+            <div class="div-search-main">
+                <a href="/addPost/<%= username %>">
+                    <div class="div-search">
+                        <img src="<%= user_img %>">
+                        <p>What's on your mind...</p>
+                        <i class="fa fa-plus"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div style="margin-top: 70px;"></div>
+            <% allPosts.forEach(function (post, index) {%>
+            <div class="content pb-3">
+                <div class="content-header row px-3 pt-2">
+                    <div class="content-header-left col-6">
+                        <a href="/ViewReadOnlyUserById/<%= post.users_post %>">
+
+                            <% if (post.user_img) { %>
+                            <img src="<%= post.user_img %>">
+                            <% } else { %>
+                            <img src="./images/dummy.jpg">
+                            <% } %>
+
+                            <span class="user_post">
+                                <%= post.users_post %>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="content-header-right col-6">
+                        <p>
+                            <script type="text/javascript">
+                                if ("<%post.posted_date %>") {
+                                    document.write(
+                                        new Intl.DateTimeFormat('en-GB', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: '2-digit'
+                                        }).format(new Date("<%=post.posted_date %>"))
+                                    );
+                                } else {
+                                    document.write(
+                                        new Intl.DateTimeFormat('en-GB', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: '2-digit'
+                                        }).format(new Date())
+                                    )
+                                }
+                            </script>
+                        </p>
+
+                    </div>
+                </div>
+                <div>
+                    <div><a href="/getPostById/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>">View
+                            Post </a></div>
+                    <div> <a href="/editPost/<%= post.post_id %>">Edit Post </a></div>
+
+                    <div> <a href="/deletePost/<%= post.post_id %>">Delete Post </a></div>
+                </div>
+                <div class="content-body">
+                    <p>
+                        <%= post.post_info %>
+                    </p>
+                </div>
+                <div class="content-multimedia">
+                    <% if (post.img) { %>
+                    <img src="<%= post.img %>">
+                    <% } %>
+                </div>
+
+                <div class="activity-response">
+                    <div><a
+                            href="/likePost/belongsTo/<%= post.users_post %>/belongsToUser/<%= post.post_id %>/likes/<%= post.likes %>/allPosts">
+                            <i class="fa fa-thumbs-up fa-2x"></i> </a><%= post.likes %></div>
+                    <div class="vertical"></div>
+                    <div><i class="fa fa-comments fa-2x"></i><%= post.post_comments.length%></div>
+                </div>
+
+                <div class="px-4 mt-3">
+                    <% post.post_comments.forEach(function(comment, index){ %>
+                    <div class="d-flex pb-3">
+                        <div>
+
+                            <span class="content-header-left">
+                                <% if(comment.user_img) { %>
+                                <img src="<%= comment.user_img %>" />
+                                <% } else { %>
+                                <img src="/images/dummy.jpg">
+                                <% } %>
+                            </span>
+
+                        </div>
+                        <div class="mx-2 px-2 pt-2 pb-2 bacground-comment">
+                            <div>
+                                <a href="/ViewReadOnlyUserById/<%= comment.user_comment %>">
+                                    <b><%= comment.user_comment%></b>
+                                </a>
+
+                            </div>
+                            <div>
+                                <%= comment.value %>
+                            </div>
+                        </div>
+                        <div class="pt-3 px-2">
+                            <a
+                                href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/editComment/<%= comment.comment_id %>/allPost">Edit</a>
+                            &nbsp;
+                            <a class="text-danger"
+                                href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/deleteComment/<%= comment.comment_id %>/allPost">Delete</a>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+                <div class="content-comment">
+                </div>
+                <a
+                    href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/addComment/allPost">
+                    <div class="div-search comment_add">
+                        <img src="<%= user_img %>">
+                        <p>Add your comment...</p>
+                    </div>
+                </a>
+                <!-- <a
+                    href="/getPostById/belongsTo/<%= post.users_post%>/belongsToUser/<%=post.post_id %>/addComment/allPost">Add
+                    Comment</a> -->
+                <!-- <hr> -->
+            </div>
+            <% }) %>
+        </div>
+        <!--middle content ending -->
+
+        <div class="column right">
+
+            <div class="event">
+                <div class="left-event">
+                    <h3>18</h3>
+                    <span>March</span>
+                </div>
+                <div class="right-event">
+                    <h3>Social Media</h3>
+                    <p> <i class="fa fa-map-marker"></i> <a href="http://maps.google.com/maps?q=Cassandra+park">
+                            Cassandra
+                            Park</a> @10 AM</p>
+                </div>
+            </div>
+
+            <div class="event">
+                <div class="left-event">
+                    <h3>20</h3>
+                    <span>April</span>
+                </div>
+                <div class="right-event">
+                    <h3>Mobile Marketing</h3>
+                    <p><i class="fa fa-map-marker"></i><a
+                            href="http://maps.google.com/maps?q=Central+Downtown+Loft+Studio">Central Downtown Loft
+                            Studio</a> @2 PM</p>
+                </div>
+            </div>
+
+            <div class="middle-adv">
+                <span>Releasing Soon...</span>
+                <img src="/images/advertisement1.jpeg">
+            </div>
+
+            <div class="footer">
+                <div class="footer-content footer-content-up">
+                    <p class="fcu1"><a href="/about">About</a></p>
+                    <p class="fcu2"><a href="/contact">Contact</a></p>
+                    <p class="fcu3"><a href="/faq">FAQ</a></p>
+                </div>
+                <div class="footer-content footer-content-down">
+                    <p class="fcd1"><a href="/privacy">Privacy</a></p>
+                    <p class="fcu2"><a href="/guidelines">Guidelines</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
